@@ -1,44 +1,111 @@
 #include<iostream>
 #include<cstring>
-#include<algorithm>
-
+#include<queue>
+ 
 using namespace std;
-
-int r,c,cnt = 0,firstR = -1,firstC = -1;
+ 
+int r, c, swanX,swanY;
+bool isFind;
 char lake[1500][1500];
 bool visitd[1500][1500];
-int dr[4] = {-1,1,0,0};
-int dc[4] = {0,0,-1,1};
-
-bool checking(){
-    return true;
-}
-void func(){
-    while(true){
-        if(checking()){
-            cout << cnt;
-            return ;
+ 
+int dx[4] = { 0, 0, 1, -1 };
+int dy[4] = { 1, -1, 0, 0 };
+ 
+queue<pair<int, int> > swanQ, swanN, Q, N;
+ 
+void swanBFS(){
+    while (!swanQ.empty() && !isFind){
+        int x = swanQ.front().first;
+        int y = swanQ.front().second;
+        swanQ.pop();
+ 
+        for (int i = 0; i < 4; i++){
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+ 
+            if (nx >= 0 && nx < r && ny >= 0  && ny < c){
+                if (visitd[nx][ny] == false){
+                    if (lake[nx][ny] == '.'){
+                        visitd[nx][ny] = true;
+                        swanQ.push(make_pair(nx, ny));
+                    }
+                    else if (lake[nx][ny] == 'L'){
+                        visitd[nx][ny] = true;
+                        isFind = true;
+                        break;
+                    }
+                    else if (lake[nx][ny] == 'X'){
+                        visitd[nx][ny] = true;
+                        swanN.push(make_pair(nx, ny));
+                    }
+                }
+            }
         }
-
-        cnt++;
     }
 }
-int main(){
-    cin >> r >> c;
-    string tmp;
-    for(int i = 0; i < r; i++){
-        cin >> tmp;
-        int len = tmp.length();
-        char* char_array = new char[len + 1];
-        strcpy(char_array, tmp.c_str());
-        for(int j = c-1; j >= 0; j--){
-            if(char_array[j] == 'L' && firstR == -1){
-                firstR = i;
-                firstC = j;
+ 
+void melting(){
+    while (!Q.empty()){
+        int x = Q.front().first;
+        int y = Q.front().second;
+        Q.pop();
+ 
+        for (int i = 0; i < 4; i++){
+            int nx = x + dx[i];
+            int ny = y + dy[i];
+ 
+            if (nx >= 0 && nx < r && ny >= 0  && ny < c){
+                if (lake[nx][ny] == 'X'){
+                    lake[nx][ny] = '.';
+                    N.push(make_pair(nx, ny));
+                }
             }
-            lake[i][j] = char_array[j];
+        }
+    }
+}
+ 
+void func(){
+    int Day = 0;
+    swanQ.push(make_pair(swanX, swanY));
+    visitd[swanX][swanY] = true;
+ 
+    while (!isFind){
+        swanBFS();
+ 
+        if (isFind == false){
+            melting();
+            Q = N;
+            swanQ = swanN;
+ 
+            while (!N.empty()) 
+                N.pop();
+            while (!swanN.empty()) 
+                swanN.pop();
+            Day++;
+        }
+    }
+    cout << Day << endl;
+}
+ 
+int main(void)
+{   
+    isFind = false;
+    cin >> r >> c;
+    for (int i = 0; i < r; i++){
+        for (int j = 0; j < c; j++){
+            cin >> lake[i][j];
+            if (lake[i][j] != 'X') 
+                Q.push(make_pair(i, j));    
+            if (lake[i][j] == 'L')
+            {
+                swanX = i;
+                swanY = j;
+            }
         }
     }
     func();
     return 0;
 }
+ 
+ 
