@@ -30,4 +30,5 @@ int main(){
     memset(Visit,false,sizeof(Visit));
 
     func(0);
+    return 0;
 }
