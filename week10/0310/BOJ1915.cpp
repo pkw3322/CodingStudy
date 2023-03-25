@@ -16,7 +16,6 @@ int func(){
             maxLen = max(maxLen,map[i][j]);
         }
     }
-
     return maxLen*maxLen;
 }
 
