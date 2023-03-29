@@ -46,13 +46,55 @@ int bfs(pair<int,int> start,pair<int,int> dirty,int board[20][20]){
         return -1;
 }
 
+int solution(pair<int,int> robot,vector<pair<int,int> >& dirtys){
+    int answer = INF;
+    int memo[20][20][20][20];
+    memset(memo,0,sizeof(memo));
+    do{ 
+        pair<int, int> tempRobot = robot;  
+        int temp[20][20];
+        memcpy(temp, map, sizeof(temp));
+        int cnt = 0; 
+
+        for(int i = 0; i < dirtys.size(); i++){  
+            temp[dirtys[i].first][dirtys[i].second] = ROBOT; 
+            temp[tempRobot.first][tempRobot.second] = CLEAN; 
+
+            if(memo[tempRobot.first][tempRobot.second][dirtys[i].first][dirtys[i].second] == 0){ 
+                int dist = bfs(tempRobot, dirtys[i],temp); 
+                memo[tempRobot.first][tempRobot.second][dirtys[i].first][dirtys[i].second] = dist;  
+
+                if(dist == -1){
+                    cnt = INF; 
+                    break;
+                }
+                else{
+                    cnt += dist;
+                }   
+            }
+            else{ 
+                if(memo[tempRobot.first][tempRobot.second][dirtys[i].first][dirtys[i].second] == -1){
+                    cnt = INF; 
+                    break;
+                }
+                else{
+                    cnt += memo[tempRobot.first][tempRobot.second][dirtys[i].first][dirtys[i].second];
+                }
+            }
+            tempRobot = dirtys[i];
+        }
+        answer = min(answer, cnt);
+    }while(next_permutation(dirtys.begin(), dirtys.end()));
+    return answer;
+}
+
 int main(){
     while(true){
         cin >> w >> h;
         char c;
         if(w == 0 && h == 0)
             break;
-        int answer = INF;
+
         memset(map,0,sizeof(map));
         pair<int,int> robot;
         vector<pair<int,int> >dirtys;
@@ -75,45 +117,8 @@ int main(){
                 }
             }
         }
-        int memo[20][20][20][20];
-        memset(memo,0,sizeof(memo));
-        do{ 
-            pair<int, int> tempRobot = robot;  
-            int temp[20][20];
-            memcpy(temp, map, sizeof(temp));
-            int cnt = 0; 
- 
-            for(int i = 0; i < dirtys.size(); i++){  
-                temp[dirtys[i].first][dirtys[i].second] = ROBOT; 
-                temp[tempRobot.first][tempRobot.second] = CLEAN; 
- 
-                if(memo[tempRobot.first][tempRobot.second][dirtys[i].first][dirtys[i].second] == 0){ 
-                    int dist = bfs(tempRobot, dirtys[i],temp); 
-                    memo[tempRobot.first][tempRobot.second][dirtys[i].first][dirtys[i].second] = dist;  
- 
-                    if(dist == -1){
-                        cnt = INF; 
-                        break;
-                    }
-                    else{
-                        cnt += dist;
-                    }   
-                }
-                else{ 
-                    if(memo[tempRobot.first][tempRobot.second][dirtys[i].first][dirtys[i].second] == -1){
-                        cnt = INF; 
-                        break;
-                    }
-                    else{
-                        cnt += memo[tempRobot.first][tempRobot.second][dirtys[i].first][dirtys[i].second];
-                    }
-                }
-                tempRobot = dirtys[i];
-            }
-            answer = min(answer, cnt);
-        }while(next_permutation(dirtys.begin(), dirtys.end()));
-
-        v.push_back((answer == INF) ? -1 : answer);
+        int result = solution(robot,dirtys);
+        v.push_back((result == INF) ? -1 : result);
     }
     for(int i = 0; i < v.size(); i++){
         cout << v[i] << '\n';
