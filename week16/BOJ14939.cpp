@@ -59,6 +59,7 @@ void solution(int now,int sum,bool arr[][10]){
     solution(now+1,sum,temp1);
 
     change(0,now,temp2);
+    
     solution(now+1,sum+1,temp2);
 }
 
