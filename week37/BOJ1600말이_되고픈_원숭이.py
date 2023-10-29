@@ -10,13 +10,18 @@ hx = [-1,1,-1,1,-2,-2,2,2]
 hy = [-2,-2,2,2,-1,1,-1,1]
 
 def bfs():
+    ans = -1
     queue = deque([(0,0,0)])
     visited = [[[0]*(k+1) for _ in range(w)] for _ in range(h)]
     visited[0][0][0] = 1
     while queue:
         cx,cy,cnt = queue.popleft()
         if cx == h-1 and cy == w-1:
-            return  visited[cx][cy][cnt]-1
+            if ans == -1:
+                ans = visited[cx][cy][cnt] - 1
+            else : 
+                ans = min(ans, visited[cx][cy][cnt] -1)
+            continue
         if cnt < k:
             for i in range(8):
                 nx,ny = cx + hx[i],cy + hy[i]
@@ -33,7 +38,7 @@ def bfs():
                 visited[nx][ny][cnt] = visited[cx][cy][cnt] + 1
                 queue.append((nx,ny,cnt))
 
-    return -1
+    return ans
 
 k = int(input())
 w,h = map(int,input().split())
