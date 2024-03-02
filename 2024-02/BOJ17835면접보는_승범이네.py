@@ -5,19 +5,18 @@ input = sys.stdin.readline
 
 def dijkstra():
     h = []
-    for meeting in meetings:
-        heappush(h,(0,meeting))
-        results[meeting] = 0
+    for i in meetings:
+        heappush(h,(0,i))
+        results[i] = 0
     while h:
-        cost, place = heappop(h)
-        if results[place] < cost:
+        cost,pos = heappop(h)
+        if results[pos] < cost:
             continue
-        for nCost,nPlace in graph[place]:
-            if cost + nCost < results[nPlace]:
-                results[nPlace] = cost + nCost
-                heappush(h,(cost+nCost,nPlace))
-
-
+        for weight,next in graph[pos]:
+            if cost + weight < results[next]:
+                results[next] = cost + weight
+                heappush(h,(cost+weight,next))
+            
 n,m,k = map(int,input().split())
 
 graph =[[] for _ in range(n+1)]
