@@ -11,20 +11,21 @@ needs = [[0]*(n+1) for _ in range(n+1)]
 degree = [0]*(n+1)
 
 for _ in range(m):
-    t,f,cnt = map(int,input().split())
-    toys[f].append((t,cnt))
-    degree[t] += 1
+    a,b,c = map(int,input().split())
+    toys[b].append((a,c))
+    degree[a] += 1
 
 q = deque()
-
+base = []
 for i in range(1,n+1):
     if degree[i] == 0:
         q.append(i)
+        base.append(i)
 
 while q:
     cur = q.popleft()
     for next, cnt in toys[cur]:
-        if needs[cur].count(0) == n + 1:
+        if cur in base:
             needs[next][cur] += cnt
         else:
             for i in range(1,n+1):
@@ -35,4 +36,4 @@ while q:
 
 for i in range(1,n+1):
     if needs[n][i] != 0:
-        print(i,needs[n][i])
+        print(i, needs[n][i])
